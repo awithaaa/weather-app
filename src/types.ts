@@ -5,5 +5,6 @@ export interface weatherBox {
     img: string,
     city: string,
     country: string,
+    dateTime: string,
     color?: string 
 }

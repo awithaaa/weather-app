@@ -52,6 +52,7 @@ export class WeatherComponent {
           img: res.current.condition.icon,
           city: res.location.name,
           country: res.location.country,
+          dateTime: res.current.last_updated,
           color: this.colores[this.selectedBox-1]
         }
         this.weatherBoxes[this.selectedBox-1] = details
@@ -84,6 +85,7 @@ export class WeatherComponent {
           img: res.current.condition.icon,
           city: res.location.name,
           country: res.location.country,
+          dateTime: res.current.last_updated,
           color: this.colores[this.amountOfWeatherBoxes.length]
         }
         this.amountOfWeatherBoxes.push(this.amountOfWeatherBoxes.length + 1)
