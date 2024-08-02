@@ -59,7 +59,6 @@ export class WeatherComponent {
         }
         this.amountOfWeatherBoxes.push(this.amountOfWeatherBoxes.length + 1)
         this.weatherBoxes.push(details)
-        console.log(res)
       }
     )
     this.searchBox = !this.searchBox
