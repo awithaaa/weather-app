@@ -1,0 +1,24 @@
+<div class="flex justify-center gap-5 mt-5 mb-5">
+    <app-ctit-search *ngIf="searchBox" (cancel)="isSearchCancel($event)" (city)="weather($event)" />
+    <div *ngFor="let box of weatherBoxes" class="flex justify-center mb-3 flex-col">
+        <div class="w-[400px] h-[500px] border-1 border-black border-solid rounded-lg {{box.color}} flex items-center flex-col">
+            <div class="w-[350px] h-[50px] mt-5 flex flex-row">
+                <div (click)="isSearchBox()" class="flex items-center w-[350px] cursor-pointer rounded-md border-0 py-1.5 text-gray-400 bg-slate-50 shadow-sm ring-1 ring-inset ring-gray-300 sm:text-sm sm:leading-6 pl-4">{{box.city}}, {{box.country}}</div>
+            </div>
+
+            <div class="w-[350px] h-[450px] flex flex-col justify-center items-center">
+                <h2 class="text-white text-6xl ">{{box.weather}} °C</h2>
+                <h2 class="text-white text-xl">{{box.condition}}</h2>
+                <img src="{{box.img}}">
+            </div>
+        </div>
+    </div>
+
+    <div *ngIf="amountOfWeatherBoxes.length < 3" class="flex justify-center mb-3 flex-col">
+        <div class="w-[400px] h-[500px] border-2 border-black border-dashed rounded-lg bg-white flex justify-center items-center flex-col">
+            <div (click)="addWeatherBox()" class="flex w-[50px] h-[50px] justify-center items-center text-5xl text-black cursor-pointer border-2 border-black border-dashed rounded-full "></div>
+        </div>
+    </div>
+    
+</div>
+
