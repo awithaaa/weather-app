@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input } from '@angular/core';
 import { WeatherService } from '../service/weather.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -20,6 +20,7 @@ export class WeatherComponent {
   condition!: string
   img!: string
   searchBox!: boolean
+  selectedBox = 0
   amountOfWeatherBoxes: number[] = []
   weatherBoxes: weatherBox[] = []
   colores: string[] = ["bg-slate-300", "bg-amber-300", "bg-pink-300"]
@@ -31,25 +32,32 @@ export class WeatherComponent {
 
   addWeatherBox() {
     if ((this.amountOfWeatherBoxes.length + 1) <= 3) {
-      this.isSearchBox()
-      console.log(this.amountOfWeatherBoxes)
+      this.isSearchBox(this.amountOfWeatherBoxes.length + 1)
     }
   }
 
-  isSearchBox() {
+  isSearchBox(index: number) {
     this.searchBox = !this.searchBox
+    this.selectedBox = index
+    console.log("Selected" +index)
   }
 
   isSearchCancel($event: boolean) {
     this.searchBox = $event
   }
-  
-  weather($event: string) {
+
+  getLocation($event: string) {
     this.location = $event
+    this.searchBox = !this.searchBox
+    this.weather()
+  }
+  
+  weather() {
     console.log(this.location)
     this.weatherService.getWeather(this.location).subscribe(
       (res: any) => {
         const details: weatherBox = {
+          index: this.selectedBox,
           weather: res.current.temp_c,
           condition: res.current.condition.text,
           img: res.current.condition.icon,
@@ -58,11 +66,15 @@ export class WeatherComponent {
           color: this.colores[this.amountOfWeatherBoxes.length]
         }
         this.amountOfWeatherBoxes.push(this.amountOfWeatherBoxes.length + 1)
-        this.weatherBoxes.push(details)
+        if (this.selectedBox in this.amountOfWeatherBoxes) {
+          this.weatherBoxes[this.selectedBox] = details
+        } else {
+          this.weatherBoxes.push(details)
+        }
         console.log(res)
+        this.selectedBox = 0
       }
     )
-    this.searchBox = !this.searchBox
   }
 
 }

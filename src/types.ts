@@ -1,4 +1,5 @@
 export interface weatherBox {
+    index: number,
     weather: number,
     condition: string,
     img: string,
