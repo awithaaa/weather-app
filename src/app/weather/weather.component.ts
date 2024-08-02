@@ -15,12 +15,10 @@ import { weatherBox } from '../../types';
 })
 export class WeatherComponent {
 
-  waetherr!: number
   location: string = '';
-  condition!: string
-  img!: string
   searchBox!: boolean
   selectedBox = 0
+  isEdit: boolean = false
   amountOfWeatherBoxes: number[] = []
   weatherBoxes: weatherBox[] = []
   colores: string[] = ["bg-slate-300", "bg-amber-300", "bg-pink-300"]
@@ -32,14 +30,34 @@ export class WeatherComponent {
 
   addWeatherBox() {
     if ((this.amountOfWeatherBoxes.length + 1) <= 3) {
-      this.isSearchBox(this.amountOfWeatherBoxes.length + 1)
+      this.selectedBox = this.amountOfWeatherBoxes.length + 1
+      this.searchBox = !this.searchBox
+      console.log(this.selectedBox)
     }
   }
 
   isSearchBox(index: number) {
     this.searchBox = !this.searchBox
     this.selectedBox = index
-    console.log("Selected" +index)
+    this.isEdit = true
+  }
+
+  editWeather() {
+    this.weatherService.getWeather(this.location).subscribe(
+      (res: any) => {
+        const details: weatherBox = {
+          index: this.selectedBox,
+          weather: res.current.temp_c,
+          condition: res.current.condition.text,
+          img: res.current.condition.icon,
+          city: res.location.name,
+          country: res.location.country,
+          color: this.colores[this.selectedBox-1]
+        }
+        this.weatherBoxes[this.selectedBox-1] = details
+        this.isEdit = false
+      }
+    )
   }
 
   isSearchCancel($event: boolean) {
@@ -49,11 +67,14 @@ export class WeatherComponent {
   getLocation($event: string) {
     this.location = $event
     this.searchBox = !this.searchBox
-    this.weather()
+    if (this.isEdit) {
+      this.editWeather();
+    } else {
+      this.weather();
+    }
   }
   
   weather() {
-    console.log(this.location)
     this.weatherService.getWeather(this.location).subscribe(
       (res: any) => {
         const details: weatherBox = {
@@ -66,12 +87,7 @@ export class WeatherComponent {
           color: this.colores[this.amountOfWeatherBoxes.length]
         }
         this.amountOfWeatherBoxes.push(this.amountOfWeatherBoxes.length + 1)
-        if (this.selectedBox in this.amountOfWeatherBoxes) {
-          this.weatherBoxes[this.selectedBox] = details
-        } else {
-          this.weatherBoxes.push(details)
-        }
-        console.log(res)
+        this.weatherBoxes.push(details)
         this.selectedBox = 0
       }
     )
