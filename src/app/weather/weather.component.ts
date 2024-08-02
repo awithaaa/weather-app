@@ -31,7 +31,6 @@ export class WeatherComponent {
 
   addWeatherBox() {
     if ((this.amountOfWeatherBoxes.length + 1) <= 3) {
-      this.amountOfWeatherBoxes.push(this.amountOfWeatherBoxes.length + 1)
       this.isSearchBox()
       console.log(this.amountOfWeatherBoxes)
     }
@@ -56,8 +55,9 @@ export class WeatherComponent {
           img: res.current.condition.icon,
           city: res.location.name,
           country: res.location.country,
-          color: this.colores[this.amountOfWeatherBoxes.length - 1]
+          color: this.colores[this.amountOfWeatherBoxes.length]
         }
+        this.amountOfWeatherBoxes.push(this.amountOfWeatherBoxes.length + 1)
         this.weatherBoxes.push(details)
         console.log(res)
       }
