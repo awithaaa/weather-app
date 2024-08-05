@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input } from '@angular/core';
 import { WeatherService } from '../service/weather.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -15,11 +15,10 @@ import { weatherBox } from '../../types';
 })
 export class WeatherComponent {
 
-  waetherr!: number
   location: string = '';
-  condition!: string
-  img!: string
   searchBox!: boolean
+  selectedBox = 0
+  isEdit: boolean = false
   amountOfWeatherBoxes: number[] = []
   weatherBoxes: weatherBox[] = []
   colores: string[] = ["bg-slate-300", "bg-amber-300", "bg-pink-300"]
@@ -31,37 +30,69 @@ export class WeatherComponent {
 
   addWeatherBox() {
     if ((this.amountOfWeatherBoxes.length + 1) <= 3) {
-      this.isSearchBox()
-      console.log(this.amountOfWeatherBoxes)
+      this.selectedBox = this.amountOfWeatherBoxes.length + 1
+      this.searchBox = !this.searchBox
+      console.log(this.selectedBox)
     }
   }
 
-  isSearchBox() {
+  isSearchBox(index: number) {
     this.searchBox = !this.searchBox
+    this.selectedBox = index
+    this.isEdit = true
   }
 
-  isSearchCancel($event: boolean) {
-    this.searchBox = $event
-  }
-  
-  weather($event: string) {
-    this.location = $event
-    console.log(this.location)
+  editWeather() {
     this.weatherService.getWeather(this.location).subscribe(
       (res: any) => {
         const details: weatherBox = {
+          index: this.selectedBox,
           weather: res.current.temp_c,
           condition: res.current.condition.text,
           img: res.current.condition.icon,
           city: res.location.name,
           country: res.location.country,
+          dateTime: res.current.last_updated,
+          color: this.colores[this.selectedBox-1]
+        }
+        this.weatherBoxes[this.selectedBox-1] = details
+        this.isEdit = false
+      }
+    )
+  }
+
+  isSearchCancel($event: boolean) {
+    this.searchBox = $event
+  }
+
+  getLocation($event: string) {
+    this.location = $event
+    this.searchBox = !this.searchBox
+    if (this.isEdit) {
+      this.editWeather();
+    } else {
+      this.weather();
+    }
+  }
+  
+  weather() {
+    this.weatherService.getWeather(this.location).subscribe(
+      (res: any) => {
+        const details: weatherBox = {
+          index: this.selectedBox,
+          weather: res.current.temp_c,
+          condition: res.current.condition.text,
+          img: res.current.condition.icon,
+          city: res.location.name,
+          country: res.location.country,
+          dateTime: res.current.last_updated,
           color: this.colores[this.amountOfWeatherBoxes.length]
         }
         this.amountOfWeatherBoxes.push(this.amountOfWeatherBoxes.length + 1)
         this.weatherBoxes.push(details)
+        this.selectedBox = 0
       }
     )
-    this.searchBox = !this.searchBox
   }
 
 }

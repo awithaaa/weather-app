@@ -10,17 +10,4 @@ import { RouterLink } from '@angular/router';
   styleUrl: './header.component.css'
 })
 export class HeaderComponent {
-  authenticated = false;
-  dropdownOpen: boolean = false;
-  user!: {
-    fName: string,
-    lName: string,
-    email: string
-  }
-
-  toggleDropdown(): void {
-    this.dropdownOpen = !this.dropdownOpen;
-  }
-
-  logout() {}
 }
